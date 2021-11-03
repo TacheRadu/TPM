@@ -1,0 +1,4 @@
+What if some exception is thrown while trying to acquire the lock?
+If the lock() method was called in the try block, it would also incorrectly call unlock() in the finally block.
+Since we only want to do everything if we got the lock, and we don't want to treat that exception in that particular
+try block, it is better to call lock() before the try. It also helps keeping the try block as fine-grained as possible.

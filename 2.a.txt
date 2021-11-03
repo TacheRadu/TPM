@@ -1,0 +1,17 @@
+The generalization won't work.
+
+Say, for example, that three threads start at the same time: one producer and two consumers.
+
+Since tail == head == 0, both consumers will start spinning.
+In the meantime, the producer will pass the while condition, acquire the enqlock, add the value in the queue and release the lock, all going well.
+
+When that is done, both consumer threads will pass the while condition, and will fight for the lock.
+After the thread reads the value from the queue, it releases the lock, so the other consumer will now get it.
+At this point, it will now try reading from the queue, but it will read an invalid value, since no new value has been written yet.
+
+Similarily, if we had two producers and the queue size was 1, they would both pass the while condition, fight for the lock, and the
+loser will overwrite the value written by the first thread.
+
+
+
+All in all, in both enq and deq methods the while condition should be after acquiring the lock.

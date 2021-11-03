@@ -1,0 +1,8 @@
+When setting the label for a thread, we first look through the values of all the other labels. This is an expensive operation.
+Therefore, it is not excluded that we might have a second thread performing that same operation at the same time with the first thread.
+In this scenario, both threads would have the same label.
+But each thread has a value assigned to them.
+It would be preferable that the first come be first served as well, that would be what comparing the labels would do.
+But in the case of identical labels, what should we do?
+The algorithm chooses the thread with the lowest index to have the highest priority. It is not really first come first served,
+but at least it assures fairness.
