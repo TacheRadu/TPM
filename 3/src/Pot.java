@@ -1,14 +1,20 @@
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Pot {
     private Integer capacity;
     private volatile Integer availablePortions;
     private ReentrantLock lock;
+    private List<Long> threadIds;
+    private boolean b;
 
-    public Pot(int capacity) {
+    public Pot(int capacity, boolean b) {
         lock = new ReentrantLock();
-        this.capacity = capacity;
+        threadIds = new LinkedList<>();
         availablePortions = 0;
+        this.b = b;
+        this.capacity = capacity;
     }
 
     public boolean canEat() {
@@ -17,13 +23,24 @@ public class Pot {
 
     public void eat() {
         lock.lock();
-        try{
-            while(!canEat()){}
+        try {
+            if (b) {
+                threadIds.add(Thread.currentThread().getId());
+                while (threadIds.get(0) != Thread.currentThread().getId()) {
+                    lock.notifyAll();
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            while (!canEat()) {
+            }
             availablePortions -= 1;
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         } finally {
+            if (b)
+                threadIds.remove(0);
             lock.unlock();
         }
     }

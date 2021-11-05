@@ -1,0 +1,10 @@
+Point a implementation time for 10 tribe members: 4ms
+Point b implementation time for 10 tribe members: 3ms
+Point a implementation time for 100 tribe members: 39ms
+Point b implementation time for 100 tribe members: 34ms
+Point a implementation time for 1000 tribe members: 266ms
+Point b implementation time for 1000 tribe members: 309ms
+Point a implementation time for 10000 tribe members: 8206ms
+Point b implementation time for 10000 tribe members: 7181ms
+Point a implementation time for 10000 tribe members: 7165ms
+Point b implementation time for 10000 tribe members: 15099ms

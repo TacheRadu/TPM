@@ -8,6 +8,5 @@ public class TribeMember implements Runnable {
     @Override
     public void run() {
         pot.eat();
-        System.out.println("Member " + Thread.currentThread().getId() + " just ate");
     }
 }

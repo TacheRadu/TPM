@@ -13,7 +13,6 @@ public class TribeCook implements Runnable {
                     break;
                 }
             }
-            System.out.println("Refilling!");
             pot.refill();
         }
     }
