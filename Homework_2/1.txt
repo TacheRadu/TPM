@@ -1,0 +1,13 @@
+Voi specifica numarul liniilor, corespunzator clasei din src/lists/CoarseList
+
+
+Adaugare element cu succes in lista: 65
+Esec la adaugare element in lista: 60
+Stergere element cu succes din lista: 92
+Esec la stergere element din lista: 94
+
+
+Intrucat totul se intampla intre un lock() si un unlock() peste intreaga lista, putem considera ca toate operatiile se
+executa ca si cum ar fi doar una.
+Astfel, punctele de linearizare sunt definite de punctul in care se finalizeaza executia, si anume la instructiunile de
+return.
