@@ -1,0 +1,32 @@
+a)
+Intr-adevar, variabila fiind atomica, ne este garantat ca indiferent cate thread-uri vor sa faca decrement si sa
+citeasca valoarea, mereu vor citi o valoare valida in raport cu ordinea in care fac aceasta operatie.
+In schimb, exista posibilitatea ca mai multe thread-uri decat elemente in coada sa incerce sa faca dequeue. In aceasta
+situatie, ar decrementa valoarea din size pana aceasta ar deveni negativa, ceea ce nu are sens.
+Intrucat conditia de wait se face pe head.next, asta nu ar fi o problema, avand in vedere ca metoda enq face increment,
+deci chiar daca ar deveni negativa valoarea din size, ar si creste la loc. Totusi, nu are sens sa ai o valoare negativa
+in aceasta variabila, deci modificarile in continuare trebuie sa aiba loc in cadrul sectiunii protejate de lock. Am
+putea spune mai degraba ca nu avem nevoie de AtomicInteger, deoarece suntem protejati de lock.
+
+b)
+Nu. Exista posibilitatea ca un thread care face dequeue sa puna lock pe nodul din tail, un alt thread sa faca enqueue
+si sa modifice valoarea nodului tail, apoi un alt thread sa faca dequeue, sa puna lock pe noul tail, si ulterior si
+thread-ul 1 si thread-ul 3 sa puna in variabila v acelasi head.next.value. Astfel, ambele vor primi aceeasi valoare,
+ambele vor executa head = head.next, si asa se va sari o valoare. Problema s-ar rezolva daca s-ar face lock invers:
+enq sa faca lock pe tail iar deq sa faca lock pe head.
+
+c)
+Trecem cu vederea faptul ca head ar trebui sa fie volatil ca sa mearga algoritmul.
+Deoarece se face lock inainte, va functiona corect. Va fi doar un thread in sectiunea critica, facand spinning o data,
+deci nu ar fi probleme.
+
+Daca le combinam in modul prezentat, este aceeasi chestie cu un pas putin mai eficient inainte. Thread-urile vor face
+wait pe conditie, iar cand aceasta se indeplineste, toate sunt trezite. Un thread va face lock, va trece evident de
+conditia de size si intr-un final va face unlock(). Din acest moment, thread-urile ramase sunt in exact situatia de mai
+sus, intra pe rand in sectiunea critica si fac spinning pana se indeplineste conditia.
+
+d)
+Da este necesar. Dorim ca fiecare thread sa verifice daca are ce element sa citeasca. Facand verificarea in sectiunea
+critica, asiguram pentru fiecare pe rand ca are ce citi. Daca o facem inainte, spre exemplu cu doua thread-uri care vor
+sa citeasca, ambele vor trece de verificare cand va fi prezent un element. Apoi vor concura pentru lock, primul va citi
+valoarea, celalalt nu va mai avea ce citi, si va citi null, chiar daca acesta nu este comportamentul dorit.
