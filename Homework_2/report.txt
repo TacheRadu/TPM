@@ -1,0 +1,25 @@
+Optimistic List benchmarks:
+Add time: 0.44596
+Check if in list time: 1.73435
+Add time: 1.43156
+Remove time: 0.7158
+Versioned optimistic List benchmarks:
+Add time: 0.29530666666666666
+Check if in list time: 0.24435
+Remove time: 0.20216
+Add time: 0.40504
+
+
+Dupa cum se observa, faptul ca nu trebuie iterat inca o data peste lista de fiecare data aduce o crestere a vitezei de
+aproape 300%.
+
+Ideea implementarii:
+Si la add, remove, contains, iteram prin lista pana gasim elementul dorit. Dar nu punem lock pe nimic pana il gasim,
+deci exista posibilitatea ca un alt thread sa modifice lista cat asteptam sa facem lock. Din acest motiv, ne salvam
+versiunea listei inainte sa incepem lock, si daca dupa ce primim acces pe lock-ul listei versiunea este schimbata, cele
+mai mari sanse sunt ca fix elementele care ne intereseaza pe noi sa fi fost modificate. Sigur, cu cat mai multe thread
+uri, cu atat mai mari sansele sa fi fost o operatie de add sau de remove care sa nu fie legata de elementele care ne
+intereseaza pe noi, insa sansa ca elementele noastre sa fie cele afectate de schimbarea versiunii tot este mai mare.
+Si faptul ca sansa sa nu iteram inca o data peste lista este proportionala cu sansa sa se fi modificat elementele care
+ne intereseaza pe noi este un avantaj major de performanta, dupa cum se poate observa si din teste.
+
